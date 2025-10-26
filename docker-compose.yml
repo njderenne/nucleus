@@ -1,0 +1,108 @@
+version: '3.9'
+
+services:
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:latest
+    container_name: nucleus-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - nucleus-network
+    restart: unless-stopped
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nucleus-frontend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+      - NODE_ENV=production
+    expose:
+      - "3000"
+    networks:
+      - nucleus-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nucleus-backend
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - QDRANT_URL=http://qdrant:6333
+    expose:
+      - "8000"
+    networks:
+      - nucleus-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - qdrant
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: nucleus-postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    networks:
+      - nucleus-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Qdrant Vector Database
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: nucleus-qdrant
+    volumes:
+      - ./data/qdrant:/qdrant/storage
+    expose:
+      - "6333"
+    networks:
+      - nucleus-network
+    restart: unless-stopped
+
+  # Redis (Optional - for caching)
+  redis:
+    image: redis:7-alpine
+    container_name: nucleus-redis
+    expose:
+      - "6379"
+    networks:
+      - nucleus-network
+    restart: unless-stopped
+
+networks:
+  nucleus-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  qdrant-data:
+
