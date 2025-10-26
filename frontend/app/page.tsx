@@ -3,18 +3,18 @@ import { ArrowRight, Brain, Calendar, DollarSign, Home, Camera, Map } from 'luci
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
               <Brain className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-slate-800">Nucleus</span>
+            <span className="text-2xl font-bold text-white">Nucleus</span>
           </div>
           <div className="space-x-4">
-            <Link href="/login" className="text-slate-600 hover:text-slate-900 font-medium">
+            <Link href="/login" className="text-slate-300 hover:text-white font-medium">
               Login
             </Link>
             <Link href="/register" className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 font-medium">
@@ -26,10 +26,10 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
-        <h1 className="text-6xl font-bold text-slate-900 mb-6">
+        <h1 className="text-6xl font-bold text-white mb-6">
           Your Life&apos;s <span className="text-primary">Operating System</span>
         </h1>
-        <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-10">
+        <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-10">
           Nucleus brings AI-powered intelligence to manage every aspect of your personal life. 
           One hub for your home, schedule, finances, hobbies, and more.
         </p>
@@ -44,7 +44,7 @@ export default function HomePage() {
 
       {/* Features Grid */}
       <section className="container mx-auto px-4 py-20">
-        <h2 className="text-4xl font-bold text-center text-slate-900 mb-12">
+        <h2 className="text-4xl font-bold text-center text-white mb-12">
           Everything You Need, One Platform
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -88,8 +88,8 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-white/80 backdrop-blur-sm mt-20">
-        <div className="container mx-auto px-4 py-8 text-center text-slate-600">
+      <footer className="border-t border-slate-800 bg-slate-900/80 backdrop-blur-sm mt-20">
+        <div className="container mx-auto px-4 py-8 text-center text-slate-400">
           <p>&copy; 2025 Nucleus. Your life&apos;s operating system.</p>
         </div>
       </footer>
@@ -104,12 +104,12 @@ function FeatureCard({ icon, title, description, color }: {
   color: string
 }) {
   return (
-    <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition border border-slate-200">
+    <div className="bg-slate-800/50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition border border-slate-700 hover:border-slate-600">
       <div className={`${color} w-16 h-16 rounded-xl flex items-center justify-center text-white mb-4`}>
         {icon}
       </div>
-      <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
-      <p className="text-slate-600">{description}</p>
+      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+      <p className="text-slate-300">{description}</p>
     </div>
   )
 }

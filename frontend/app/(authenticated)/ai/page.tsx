@@ -32,9 +32,9 @@ export default function AIAssistantPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-slate-900 mb-6">AI Assistant</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">AI Assistant</h1>
       
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col" style={{ height: 'calc(100vh - 200px)' }}>
+      <div className="bg-slate-800/50 rounded-xl shadow-sm border border-slate-700 flex flex-col" style={{ height: 'calc(100vh - 200px)' }}>
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.length === 0 ? (
@@ -42,10 +42,10 @@ export default function AIAssistantPage() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Brain className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+              <h3 className="text-lg font-semibold text-white mb-2">
                 How can I help you today?
               </h3>
-              <p className="text-slate-600">
+              <p className="text-slate-300">
                 Ask me anything about your life management, schedule, budget, or get insights.
               </p>
             </div>
@@ -59,7 +59,7 @@ export default function AIAssistantPage() {
                   className={`max-w-[80%] px-4 py-3 rounded-2xl ${
                     message.role === 'user'
                       ? 'bg-primary text-white'
-                      : 'bg-slate-100 text-slate-900'
+                      : 'bg-slate-700 text-white'
                   }`}
                 >
                   {message.content}
@@ -69,11 +69,11 @@ export default function AIAssistantPage() {
           )}
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-slate-100 px-4 py-3 rounded-2xl">
+              <div className="bg-slate-700 px-4 py-3 rounded-2xl">
                 <div className="flex space-x-2">
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function AIAssistantPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-slate-200 p-4">
+        <div className="border-t border-slate-700 p-4">
           <div className="flex space-x-4">
             <input
               type="text"
@@ -89,7 +89,7 @@ export default function AIAssistantPage() {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Type your message..."
-              className="flex-1 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="flex-1 px-4 py-3 bg-slate-900/50 border border-slate-600 text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-slate-500"
             />
             <button
               onClick={handleSend}
