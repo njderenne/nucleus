@@ -16,11 +16,21 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  /* Prevent pull-to-refresh on mobile */
+  overscroll-behavior-y: contain;
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Touch-friendly tap targets */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -43,3 +53,30 @@ body {
   background: #64748b;
 }
 
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  /* Larger tap targets on mobile */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent text selection on interactive elements */
+  button, .touch-manipulation {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Smooth transitions for sidebar */
+@media (prefers-reduced-motion: no-preference) {
+  aside {
+    transition: transform 300ms ease-in-out, width 300ms ease-in-out;
+  }
+}

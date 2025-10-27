@@ -4,8 +4,11 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuthStore } from '@/lib/store'
-import { Brain, Home, Calendar, DollarSign, Map, Camera, MessageSquare, LogOut, Menu, ChevronLeft, ChevronRight, ChevronDown, Palette, LayoutDashboard } from 'lucide-react'
+import { Brain, Home, Calendar, DollarSign, Map, Camera, MessageSquare, LogOut, Menu, ChevronLeft, ChevronRight, ChevronDown, Palette, LayoutDashboard, Dumbbell, TrendingUp, Target } from 'lucide-react'
 import { useState } from 'react'
+import Header from '@/components/Header'
+import { HeaderProvider } from '@/contexts/HeaderContext'
+import { FitnessProvider } from '@/contexts/FitnessContext'
 
 export default function AuthenticatedLayout({
   children,
@@ -60,6 +63,16 @@ export default function AuthenticatedLayout({
       ]
     },
     {
+      id: 'fitness',
+      name: 'Fitness',
+      icon: Dumbbell,
+      subItems: [
+        { name: 'Workouts', href: '/fitness/workouts', icon: Dumbbell },
+        { name: 'Progress', href: '/fitness/progress', icon: TrendingUp },
+        { name: 'Nutrition', href: '/fitness/nutrition', icon: Target },
+      ]
+    },
+    {
       id: 'finance',
       name: 'Finance',
       icon: DollarSign,
@@ -91,13 +104,15 @@ export default function AuthenticatedLayout({
   ]
 
   return (
+    <FitnessProvider>
+    <HeaderProvider>
     <div className="min-h-screen bg-slate-50 flex">
       {/* Sidebar */}
       <aside className={`${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 ${
-        sidebarCollapsed ? 'w-20' : 'w-64'
-      } bg-slate-800 text-white transition-all duration-300 ease-in-out`}>
+      } lg:translate-x-0 fixed inset-y-0 left-0 z-50 w-64 lg:w-64 ${
+        sidebarCollapsed ? 'lg:w-20' : 'lg:w-64'
+      } bg-slate-800 text-white transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none`}>
         <div className="h-full flex flex-col">
           {/* Logo */}
           <div className="p-6 border-b border-slate-700 flex items-center justify-between">
@@ -108,22 +123,32 @@ export default function AuthenticatedLayout({
               {!sidebarCollapsed && <span className="text-xl font-bold">Nucleus</span>}
             </div>
             
-            {/* Collapse Button (Desktop only) */}
+              {/* Collapse Button (Desktop only) */}
+            {!sidebarOpen && (
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="hidden lg:flex items-center justify-center p-2 rounded-lg hover:bg-slate-700 transition text-slate-400 hover:text-white"
+                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              >
+                {sidebarCollapsed ? (
+                  <ChevronRight className="w-4 h-4" />
+                ) : (
+                  <ChevronLeft className="w-4 h-4" />
+                )}
+              </button>
+            )}
+            
+            {/* Close Button (Mobile only) */}
             <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="hidden lg:flex items-center justify-center p-2 rounded-lg hover:bg-slate-700 transition text-slate-400 hover:text-white"
-              title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden text-slate-400 hover:text-white p-2"
             >
-              {sidebarCollapsed ? (
-                <ChevronRight className="w-4 h-4" />
-              ) : (
-                <ChevronLeft className="w-4 h-4" />
-              )}
+              <span className="text-2xl leading-none">×</span>
             </button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto overscroll-contain">
             {navigationStructure.map((item) => {
               // Standalone menu items (no sub-items)
               if (item.standalone) {
@@ -131,9 +156,10 @@ export default function AuthenticatedLayout({
                   <Link
                     key={item.name}
                     href={item.href!}
+                    onClick={() => setSidebarOpen(false)}
                     className={`flex items-center ${
                       sidebarCollapsed ? 'justify-center' : 'space-x-3'
-                    } px-4 py-3 rounded-lg hover:bg-slate-700 transition group relative`}
+                    } px-4 py-3 rounded-lg hover:bg-slate-700 active:bg-slate-600 transition group relative touch-manipulation`}
                     title={sidebarCollapsed ? item.name : ''}
                   >
                     <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -191,7 +217,8 @@ export default function AuthenticatedLayout({
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-slate-700/50 transition text-slate-300 hover:text-white text-sm"
+                          onClick={() => setSidebarOpen(false)}
+                          className="flex items-center space-x-3 px-4 py-2.5 rounded-lg hover:bg-slate-700/50 active:bg-slate-700 transition text-slate-300 hover:text-white text-sm touch-manipulation"
                         >
                           <subItem.icon className="w-4 h-4 flex-shrink-0" />
                           <span>{subItem.name}</span>
@@ -242,23 +269,39 @@ export default function AuthenticatedLayout({
       )}
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen bg-slate-900">
-        {/* Top bar */}
-        <header className="bg-slate-800 border-b border-slate-700 px-6 py-4 lg:hidden">
+      <div className={`flex-1 flex flex-col min-h-screen bg-slate-900 w-full ${
+        sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
+      } transition-all duration-300`}>
+        {/* Mobile Header with Menu */}
+        <div className="bg-slate-800 border-b border-slate-700 px-4 py-3 lg:hidden flex items-center justify-between sticky top-0 z-30">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-slate-300 hover:text-white"
+            className="text-slate-300 hover:text-white p-2 -ml-2"
           >
             <Menu className="w-6 h-6" />
           </button>
-        </header>
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+              <Brain className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-lg font-bold text-white">Nucleus</span>
+          </div>
+          <div className="w-8" /> {/* Spacer for centering */}
+        </div>
+
+        {/* Desktop Header Component */}
+        <div className="hidden lg:block">
+          <Header />
+        </div>
 
         {/* Page content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 md:p-6">
           {children}
         </main>
       </div>
     </div>
+    </HeaderProvider>
+    </FitnessProvider>
   )
 }
 
